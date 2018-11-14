@@ -1,0 +1,51 @@
+<html>
+
+<head>
+    <title>Demo Nodejs IO</title>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script src="socket.io.js"></script>
+    <script src="socket.io-stream.js"></script>
+    <script src="peer-client.js"></script>
+
+    <script src="MultiStreamsMixer.js"></script>
+    <!--<script src="https://www.webrtc-experiment.com/MultiStreamsMixer.js"></script>-->
+</head>
+
+<body>
+
+<h3>Local Stream</h3>
+<video id="localStream" width="320" height="240" controls ></video>
+<video id="video2" width="320" height="240" controls ></video>
+<canvas id="canvas" width="320" height="240"></canvas>
+
+<br/>
+<audio id="music" width="320" autoplay muted controls>
+    <!--<source src="horse.ogg" type="audio/ogg">-->
+    <source src="BuonCuaAnh.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<audio id="music2" width="320" autoplay muted controls>
+    <!--<source src="horse.ogg" type="audio/ogg">-->
+    <source src="LacTroi.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<audio id="music3" width="320" controls></audio>
+
+<h3>Remote Stream</h3>
+<video id="remoteStream" width="320" height="240" controls ></video> <!--recorder-->
+<canvas id="remoteCanvas" width="320" height="240"></canvas> <!--recorder-->
+<video id="remoteStream2" width="320" height="240" controls ></video> <!--webRTC-->
+
+<h3 id="peer_id"></h3>
+
+<input type="text" id="remoteId" placeholder="Remote Id"/>
+<button id="btnCall">Call</button>
+
+<h3>Upload File</h3>
+<input id="file" type="file" />
+
+</body>
+
+<script src="webRTC.js"></script>
+
+</html>
