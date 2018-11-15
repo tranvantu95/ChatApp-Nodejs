@@ -1,3 +1,3 @@
-# WebRTCDemo-NodeServer
+# ChatApp-Nodejs
 
-https://nodejswebrtc.herokuapp.com/
+https://chat-app-ging-nodejs.herokuapp.com/
