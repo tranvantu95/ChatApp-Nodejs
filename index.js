@@ -26,6 +26,8 @@ var io = require("socket.io")(server);
 
 var users = [];
 
+var streamer = {};
+
 io.on("connection", function (socket) {
     console.log("connection", socket.id);
 
@@ -56,10 +58,23 @@ io.on("connection", function (socket) {
         // io.to("socket_id").emit("server-send-data", data); // send to socket_id
     });
 
+    socket.on("streamer-connect", function () {
+        console.log("streamer-connect", socket.id);
+        streamer.socket = socket;
+    });
+
     socket.on("question", function (data, func) {
         console.log("question", data);
         func("ok!");
+
+        socket.broadcast.emit("question", data);
     });
+
+    socket.on("answer", function (data) {
+        console.log("answer", data);
+
+        if(streamer.socket) streamer.socket.emit("answer", data);
+    })
 
     // socket.on("client-send-username", function (username) {
     //     console.log(username);

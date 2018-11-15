@@ -1,13 +1,19 @@
 
 let local = false;
 
-let socket = io(local ? "http://localhost:8080" : "https://chat-app-ging-nodejs.herokuapp.com/");
+let socket = io(local ? "http://localhost:8080" : "https://chat-app-ging-nodejs.herokuapp.com");
 
 socket.on("connect", () => {
     console.log("connect", socket.id);
 
     socket.on("disconnect", () => {
         console.log("disconnect", socket.id);
+    });
+
+    socket.emit("streamer-connect");
+
+    socket.on("answer", (data) => {
+        $("#answer").html(data);
     });
 
 });
