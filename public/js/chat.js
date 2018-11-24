@@ -1,5 +1,5 @@
 
-let local = false;
+let local = true;
 
 let socket = io(local ? "http://localhost:8080" : "https://chat-app-ging-nodejs.herokuapp.com");
 

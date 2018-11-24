@@ -4418,7 +4418,7 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder) StringDecoder = require('public/libraries/socket.io-stream').StringDecoder;
+    if (!StringDecoder) StringDecoder = require('public/js/libraries/socket.io-stream').StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -4529,7 +4529,7 @@ function needMoreData(state) {
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = require('public/libraries/socket.io-stream').StringDecoder;
+  if (!StringDecoder) StringDecoder = require('public/js/libraries/socket.io-stream').StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
