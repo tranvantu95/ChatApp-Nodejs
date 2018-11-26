@@ -5,15 +5,23 @@ var User = require("./model/user");
 module.exports = function(app) {
 
     app.get("/", function (req, res) {
-        console.log(req.user);
+        console.log("home", req.isAuthenticated(), req.user);
         res.render("home");
     });
 
     app.get("/login", function (req, res) {
+        console.log("login", req.isAuthenticated(), req.user);
         res.render("login");
     });
 
+    app.get("/logout", function (req, res) {
+        console.log("logout", req.isAuthenticated(), req.user);
+        req.logout();
+        res.redirect("/");
+    });
+
     app.get("/register", function (req, res) {
+        console.log(req.isAuthenticated(), req.user);
         res.render("register");
     });
 
@@ -62,12 +70,12 @@ module.exports = function(app) {
         }
     ));
 
-    passport.serializeUser(function(user, done) {
+    passport.serializeUser(function(user, done) { // save cookie
         console.log("serializeUser", user);
         done(null, user.username);
     });
 
-    passport.deserializeUser(function(name, done) {
+    passport.deserializeUser(function(name, done) { // get cookie
         // User.findById(id, function(err, user) {
         //     done(err, user);
         // });
