@@ -5,19 +5,25 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 
 // lấy thông tin từ form HTML
-var bodyParser = require('body-parser');
+let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:true}));
 // app.use(bodyParser.json());
 
-var session = require("express-session");
+let session = require("express-session");
 app.use(session({ secret: "cats" , resave: true, saveUninitialized: true}));
 
-var passport = require('passport');
+let passport = require('passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
+let flash = require('connect-flash');
+app.use(flash());
+
+let config = require("./app/config");
 let server = require("http").Server(app);
-server.listen(process.env.PORT || 8080);
+server.listen(config.port, ()=>{
+    console.log('Server listening at port %d', config.port);
+});
 require("./app/socket")(server);
 require("./app/routes")(app);
 require("./app/db")();

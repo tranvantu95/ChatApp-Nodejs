@@ -1,7 +1,7 @@
 module.exports = function () {
 
-    let config = require("./config/config");
-    console.log("MongoDB_URI", config.MongoDB_URI);
+    let config = require("./config");
+    // console.log("MongoDB_URI", config.MongoDB_URI);
 
     let mongoose = require('mongoose');
     mongoose.connection.on('error', function (err) {

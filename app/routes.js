@@ -1,6 +1,10 @@
+let Recaptcha = require('express-recaptcha').Recaptcha;
+let recaptcha = new Recaptcha('6LdCNGkUAAAAAFSUV8w9_bldARR_nLBlw1yGtHIQ', '6LdCNGkUAAAAAFRHHN0V671w59Ibyob9bCylUWCo');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require("./model/user");
+let am = require("./account-manager");
+
 
 module.exports = function(app) {
 
@@ -10,7 +14,7 @@ module.exports = function(app) {
     });
 
     app.get("/login", function (req, res) {
-        console.log("login", req.isAuthenticated(), req.user);
+        console.log("login", req.isAuthenticated(), req.user, req.flash('message'));
         res.render("login");
     });
 
@@ -21,67 +25,102 @@ module.exports = function(app) {
     });
 
     app.get("/register", function (req, res) {
-        console.log(req.isAuthenticated(), req.user);
+        console.log("register", req.isAuthenticated(), req.user, req.flash('message'));
         res.render("register");
     });
 
-    //
-    // app.post('/login', function (req, res) {
-    //     User.findOne({username: req.body.username, password: req.body.password}, function (err, user) {
-    //         if (err) return console.error(err);
-    //         console.log(user);
-    //     });
-    //     res.render("login");
-    // });
+    // app.post('/login', passport.authenticate('local', {
+    //     successRedirect: '/',
+    //     failureRedirect: '/login'
+    // }));
 
-    app.post('/login', passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    }));
+    app.post('/login', recaptcha.middleware.verify, function(req, res) {
 
-    app.post("/register", function (req, res) {
-        console.log(req.body);
-        let user = new User({
-            id: "xxx",
-            username: req.body.username,
-            password: req.body.password
-        });
-        user.save(function (err, user) {
-            if (err) return console.error(err);
-        });
-        res.render("register");
+        // if(req.recaptcha.error) {
+        //     req.flash('loginMessage', {'type':'danger','mss':'Lỗi CAPTCHA!'});
+        //     res.redirect('/login');
+        //     return;
+        // }
+
+        passport.authenticate('login', function(err, user) {
+            if(err) {
+                if(err.message) req.flash('message', err.message);
+                return res.redirect('/login');
+            }
+            if(!user) return res.redirect('/login');
+
+            if(user.twofactor && user.twofactor.enable){
+                req.flash('twofactor', {'email': req.body.email, 'pass': req.body.password});
+                return res.redirect('/login');
+            }
+
+            req.logIn(user, function(err){
+                if(err) return res.redirect('/login');
+                return res.redirect('/');
+            });
+
+        })(req, res);
     });
 
-    passport.use('local', new LocalStrategy(
-        function(username, password, done) {
-            console.log('authenticate local', username, password);
-            // User.findOne({ username: username }, function (err, user) {
-            //     if (err) { return done(err); }
-            //     if (!user) {
-            //         return done(null, false, { message: 'Incorrect username.' });
-            //     }
-            //     if (!user.validPassword(password)) {
-            //         return done(null, false, { message: 'Incorrect password.' });
-            //     }
-            //     return done(null, user);
-            // });
+    app.post("/register", recaptcha.middleware.verify, function(req, res) {
 
-            return done(null, {username:username});
-        }
-    ));
+        // if(req.recaptcha.error) {
+        //     req.flash('loginMessage', {'type':'danger','mss':'Lỗi CAPTCHA!'});
+        //     res.redirect('/login');
+        //     return;
+        // }
 
-    passport.serializeUser(function(user, done) { // save cookie
-        console.log("serializeUser", user);
-        done(null, user.username);
-    });
+        passport.authenticate('register', function(err, user) {
+            if(err) {
+                if(err.message) req.flash('message', err.message);
+                return res.redirect('/register');
+            }
+            if(!user) return res.redirect('/register');
 
-    passport.deserializeUser(function(name, done) { // get cookie
-        // User.findById(id, function(err, user) {
-        //     done(err, user);
-        // });
+            req.logIn(user, function(err){
+                if(err) return res.redirect('/register');
+                return res.redirect('/');
+            });
 
-        console.log("deserializeUser", name);
-        done(null, name);
+        })(req, res);
     });
 
 };
+
+passport.use('login', new LocalStrategy(
+    function(account, password, done) {
+        console.log('authenticate login', account, password);
+
+        am.login(account, password).then((user)=>{
+            done(null, user);
+        }, (err)=>{
+            done(err);
+        });
+    }
+));
+
+passport.use('register', new LocalStrategy(
+    function(account, password, done) {
+        console.log('authenticate register', account, password);
+
+        am.register(account, password).then((user)=>{
+            done(null, user);
+        }, (err)=>{
+            done(err);
+        });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    console.log("serializeUser", user);
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    console.log("deserializeUser", id);
+    am.findById(id).then((user)=>{
+        done(null, user);
+    },(err)=>{
+        done(err);
+    });
+});
