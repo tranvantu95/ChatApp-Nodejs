@@ -1,4 +1,6 @@
 let validate = require("./validate");
+let define = require("./define");
+let strings = require("./strings");
 let User = require("./model/user");
 
 module.exports.login = (account, password) => {
@@ -6,8 +8,8 @@ module.exports.login = (account, password) => {
         let _user = getUser(account);
         User.findOne(_user, function (err, user) {
             if (err) return reject(err);
-            if (!user) return reject({ message: 'Incorrect account!' });
-            if (!user.validPassword(password)) return reject({ message: 'Incorrect password!' });
+            if (!user) return reject({ message: strings.incorrect_login, type: define.incorrect_account });
+            if (!user.validPassword(password)) return reject({ message: strings.incorrect_login, type: define.incorrect_password });
             return resolve(user);
         });
     })
@@ -18,7 +20,7 @@ module.exports.register = (account, password) => {
         let _user = getUser(account);
         User.findOne(_user, function (err, user) {
             if (err) return reject(err);
-            if (user) return reject({ message: 'Account already exist!' });
+            if (user) return reject({ message: strings.incorrect_register, type: define.account_already_exist });
 
             _user.password = password;
 

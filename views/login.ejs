@@ -3,6 +3,10 @@
 <div>
     <h3 style="text-align: center">Login</h3>
 
+    <% if(error && error.length > 0) { %>
+        <p><%= error[0].message %></p>
+    <% } %>
+
     <form action="/login" method="post">
         <div>
             <label>Username:</label>

@@ -2,6 +2,10 @@
 <div>
     <h3 style="text-align: center">Register</h3>
 
+    <%if(error && error.length > 0) {%>
+        <p><%= error[0].message %></p>
+    <% } %>
+
     <form action="/register" method="post">
         <div>
             <label>Username:</label>

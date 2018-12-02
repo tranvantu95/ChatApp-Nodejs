@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <title>ChatApp</title>
     <script src="js/libraries/jquery-3.2.1.min.js" ></script>
+    <script src="js/strings.js" ></script>
 </head>
 <body style="margin: 0; padding: 0; background: beige">
 <header style="margin: 0; padding: 0; background: aqua">
     <h3 style="text-align: center">Header</h3>
-    <a href="/login" style="margin-left: auto; margin-right: 0;">Login</a>
-    <a href="/logout" style="margin-left: auto; margin-right: 0;">Logout</a>
-    <a href="/register" style="margin-left: auto; margin-right: 0;">Register</a>
+    <% if(typeof user != 'undefined' && user) { %>
+
+        <a><%= user.username %></a>
+
+        <a href="/logout" style="margin-left: auto; margin-right: 0;">Logout</a>
+
+    <% } else { %>
+        <a href="/login" style="margin-left: auto; margin-right: 0;">Login</a>
+        <a href="/register" style="margin-left: auto; margin-right: 0;">Register</a>
+    <% } %>
 </header>
