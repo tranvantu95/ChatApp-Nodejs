@@ -1,10 +1,15 @@
-let validate = require("./validate");
-let define = require("./define");
-let strings = require("./strings");
+let validate = require("./utils/validate");
+let define = require("./utils/define");
+let strings = require("./utils/strings");
 let User = require("./model/user");
 
 module.exports.login = (account, password) => {
     return new Promise((resolve, reject) => {
+        if(typeof account === 'undefined'
+            || typeof password === 'undefined'
+            || account === null
+            || password === null) reject(new Error("Incorrect parameters"));
+
         let _user = getUser(account);
         User.findOne(_user, function (err, user) {
             if (err) return reject(err);
@@ -17,6 +22,11 @@ module.exports.login = (account, password) => {
 
 module.exports.register = (account, password) => {
     return new Promise((resolve, reject) => {
+        if(typeof account === 'undefined'
+            || typeof password === 'undefined'
+            || account === null
+            || password === null) reject(new Error("Incorrect parameters"));
+
         let _user = getUser(account);
         User.findOne(_user, function (err, user) {
             if (err) return reject(err);

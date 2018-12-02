@@ -1,6 +1,6 @@
 module.exports = function () {
 
-    let config = require("./config");
+    let config = require("./utils/config");
     // console.log("MongoDB_URI", config.MongoDB_URI);
 
     let mongoose = require('mongoose');

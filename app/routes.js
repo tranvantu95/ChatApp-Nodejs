@@ -3,7 +3,7 @@ let recaptcha = new Recaptcha('6LdCNGkUAAAAAFSUV8w9_bldARR_nLBlw1yGtHIQ', '6LdCN
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 let am = require("./account-manager");
-let config = require("./config");
+let config = require("./utils/config");
 
 module.exports = function(app) {
 

@@ -6,8 +6,8 @@ app.set("views", "./views");
 
 // lấy thông tin từ form HTML
 let bodyParser = require('body-parser');
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-// app.use(bodyParser.json());
 
 let session = require("express-session");
 app.use(session({ secret: "cats" , resave: true, saveUninitialized: true}));
@@ -19,11 +19,12 @@ app.use(passport.session());
 let flash = require('connect-flash');
 app.use(flash());
 
-let config = require("./app/config");
+let config = require("./app/utils/config");
 let server = require("http").Server(app);
 server.listen(config.port, ()=>{
     console.log('Server listening at port %d', config.port);
 });
 require("./app/socket")(server);
 require("./app/routes")(app);
+require("./app/api")(app);
 require("./app/db")();
