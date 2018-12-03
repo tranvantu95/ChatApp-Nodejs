@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ChatApp</title>
-    <script src="js/libraries/jquery-3.2.1.min.js" ></script>
-    <script src="js/libraries/socket.io.js"></script>
-    <script src="js/chat.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/chat.css">
-</head>
-<body>
-    <div>
-        <p>Question</p>
-        <input type="text" id="question"/>
-        <input type="button" value="Send" id="btn_send_question">
-        <p>Answer</p>
-        <p id="answer"></p>
-    </div>
-</body>
-</html>
+<% include model/header %>
+<script src="js/libraries/socket.io.js"></script>
+<script src="js/chat.js"></script>
+<link rel="stylesheet" type="text/css" href="css/chat.css">
+<div>
+    <p>Question</p>
+    <input type="text" id="question"/>
+    <input type="button" value="Send" id="btn_send_question">
+    <p>Answer</p>
+    <p id="answer"></p>
+</div>
+<% include model/footer %>

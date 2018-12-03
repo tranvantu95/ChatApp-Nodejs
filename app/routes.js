@@ -17,15 +17,21 @@ module.exports = function(app) {
         res.render("login", {error: req.flash('error')});
     });
 
+    app.get("/register", function (req, res) {
+        if(config.debug) console.log("register", req.isAuthenticated(), req.user);
+        res.render("register", {error: req.flash('error')});
+    });
+
     app.get("/logout", function (req, res) {
         if(config.debug) console.log("logout", req.isAuthenticated(), req.user);
         req.logout();
         res.redirect("/");
     });
 
-    app.get("/register", function (req, res) {
-        if(config.debug) console.log("register", req.isAuthenticated(), req.user);
-        res.render("register", {error: req.flash('error')});
+    app.get("/chat", function (req, res) {
+        if(config.debug) console.log("chat", req.isAuthenticated(), req.user);
+        if(req.isAuthenticated()) res.render("chat", {user: req.user});
+        else res.redirect("/login");
     });
 
     // app.post('/login', passport.authenticate('local', {

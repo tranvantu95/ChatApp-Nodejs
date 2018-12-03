@@ -10,9 +10,9 @@ module.exports = function(app) {
         if(config.debug) console.log("/api/login", account, password);
 
         am.login(account, password).then((user) => {
-            res.send(new Response(define.success, "", user).toJson());
+            res.send(new Response(define.success, "", user.getLoginResponse()).toJson());
         }, (err) => {
-            res.send(new Response(define.failed, err.message).toJson());
+            res.send(new Response(define.failed, err ? err.message : "").toJson());
         })
     });
 
@@ -22,9 +22,9 @@ module.exports = function(app) {
         if(config.debug) console.log("/api/register", account, password);
 
         am.register(account, password).then((user) => {
-            res.send(new Response(define.success, "", user).toJson());
+            res.send(new Response(define.success, "", user.getLoginResponse()).toJson());
         }, (err) => {
-            res.send(new Response(define.failed, err.message).toJson());
+            res.send(new Response(define.failed, err ? err.message : "").toJson());
         })
     });
 
