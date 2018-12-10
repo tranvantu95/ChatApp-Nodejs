@@ -4,16 +4,18 @@
     <h3 style="text-align: center">Login</h3>
 
     <% if(error && error.length > 0) { %>
-        <p><%= error[0].message %></p>
+        <p><%= error[0] %></p>
     <% } %>
 
     <form action="/login" method="post">
         <div>
-            <label>Username:</label>
-            <input type="text" name="username"/>
+            <label>Account (username, email or phone):</label>
+            </br>
+            <input type="text" name="account"/>
         </div>
         <div>
             <label>Password:</label>
+            </br>
             <input type="password" name="password"/>
         </div>
         <!--<div class="form-group g-recaptcha" data-sitekey="6LdCNGkUAAAAAFSUV8w9_bldARR_nLBlw1yGtHIQ" data-callback="enableRegisterButton" data-expired-callback="recaptchaExpired" data-error-callback="recaptchaExpired"></div>-->
@@ -21,5 +23,9 @@
             <input type="submit" value="Login"/>
         </div>
     </form>
+
+    </br>
+    <a href="/auth/facebook">Login With Facebook</a>
+
 </div>
 <% include model/footer %>
