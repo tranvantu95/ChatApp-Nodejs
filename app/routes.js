@@ -1,7 +1,8 @@
 let Recaptcha = require('express-recaptcha').Recaptcha;
 let recaptcha = new Recaptcha('6LdCNGkUAAAAAFSUV8w9_bldARR_nLBlw1yGtHIQ', '6LdCNGkUAAAAAFRHHN0V671w59Ibyob9bCylUWCo');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+let passport = require('passport');
+let LocalStrategy = require('passport-local').Strategy;
+let FacebookStrategy = require('passport-facebook').Strategy;
 let am = require("./account-manager");
 let config = require("./utils/config");
 
@@ -47,25 +48,39 @@ module.exports = function(app) {
         //     return;
         // }
 
-        passport.authenticate('login', function(err, user) {
-            if(err) {
-                if(err.message) req.flash('error', err);
-                return res.redirect('/login');
-            }
+        let account = req.body.account;
+        let password = req.body.password;
 
-            if(!user) return res.redirect('/login');
-
-            // if(user.twofactor && user.twofactor.enable){
-            //     req.flash('twofactor', {'email': req.body.email, 'pass': req.body.password});
-            //     return res.redirect('/login');
-            // }
-
+        am.login(account, password).then(user => {
             req.logIn(user, function(err){
                 if(err) return res.redirect('/login');
                 return res.redirect('/');
             });
+        }, err => {
+            if(err.message) req.flash('error', err.message);
+            return res.redirect('/login');
+        });
 
-        })(req, res);
+        // passport.authenticate('login', function(err, user) {
+        //     if(err) {
+        //         console.log(err);
+        //         if(err.message) req.flash('error', err.message);
+        //         return res.redirect('/login');
+        //     }
+        //
+        //     if(!user) return res.redirect('/login');
+        //
+        //     // if(user.twofactor && user.twofactor.enable){
+        //     //     req.flash('twofactor', {'email': req.body.email, 'pass': req.body.password});
+        //     //     return res.redirect('/login');
+        //     // }
+        //
+        //     req.logIn(user, function(err){
+        //         if(err) return res.redirect('/login');
+        //         return res.redirect('/');
+        //     });
+        //
+        // })(req, res);
     });
 
     app.post("/register", recaptcha.middleware.verify, function(req, res) {
@@ -76,58 +91,82 @@ module.exports = function(app) {
         //     return;
         // }
 
-        passport.authenticate('register', function(err, user) {
-            if(err) {
-                if(err.message) req.flash('error', err);
-                return res.redirect('/register');
-            }
+        let display_name = req.body.display_name;
+        let username = req.body.username;
+        let email = req.body.email;
+        let phone = req.body.phone;
+        let password = req.body.password;
 
-            if(!user) return res.redirect('/register');
-
+        am.register(display_name, username, email, phone, password).then(user => {
             req.logIn(user, function(err){
                 if(err) return res.redirect('/register');
                 return res.redirect('/');
             });
+        }, err => {
+            if(err.message) req.flash('error', err.message);
+            return res.redirect('/register');
+        });
 
-        })(req, res);
+        // passport.authenticate('register', function(err, user) {
+        //     if(err) {
+        //         if(err.message) req.flash('error', err);
+        //         return res.redirect('/register');
+        //     }
+        //
+        //     if(!user) return res.redirect('/register');
+        //
+        //     req.logIn(user, function(err){
+        //         if(err) return res.redirect('/register');
+        //         return res.redirect('/');
+        //     });
+        //
+        // })(req, res);
     });
+
+    app.get('/auth/facebook', passport.authenticate('facebook'));
+
+    app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }));
 
 };
 
-passport.use('login', new LocalStrategy(
-    function(account, password, done) {
-        if(config.debug) console.log('authenticate login', account, password);
+// passport.use('login', new LocalStrategy(
+//     function(account, password, done) {
+//         am.login(account, password).then((user)=>{
+//             done(null, user);
+//         }, (err)=>{
+//             done(err);
+//         });
+//     }
+// ));
 
-        am.login(account, password).then((user)=>{
+passport.use('facebook', new FacebookStrategy({
+        clientID: config.FACEBOOK_APP_ID,
+        clientSecret: config.FACEBOOK_APP_SECRET,
+        callbackURL: config.host + "auth/facebook/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        if(config.debug) console.log(accessToken);
+        am.loginWithFacebook(profile).then(user => {
             done(null, user);
-        }, (err)=>{
+        }, err => {
             done(err);
-        });
+        })
     }
 ));
 
-passport.use('register', new LocalStrategy(
-    function(account, password, done) {
-        if(config.debug) console.log('authenticate register', account, password);
-
-        am.register(account, password).then((user)=>{
-            done(null, user);
-        }, (err)=>{
-            done(err);
-        });
-    }
-));
-
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function(user, done) { // run when req.login(user)
     if(config.debug) console.log("serializeUser", user);
-    done(null, user.id);
+    done(null, user.id); // save id to cookie
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function(id, done) { // run when have a request from client, get id from cookie
     if(config.debug) console.log("deserializeUser", id);
-    am.findById(id).then((user)=>{
-        done(null, user);
-    },(err)=>{
-        done(err);
+    am.findById(id).then(user => {
+        done(null, user); // save user to request
+    }, err => {
+        done(null, null);
     });
 });

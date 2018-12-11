@@ -1,10 +1,12 @@
 let mongoose = require('mongoose');
 
 let userSchema = mongoose.Schema({
+    display_name: String,
     username: String,
-    password: String,
     phone: String,
     email: String,
+    facebook_id: String,
+    password: String,
 });
 
 userSchema.methods.validPassword = function(password) {
@@ -14,7 +16,7 @@ userSchema.methods.validPassword = function(password) {
 userSchema.methods.getLoginResponse = function() {
     return {
         id: this.id,
-        username: this.username
+        display_name: this.display_name
     };
 };
 

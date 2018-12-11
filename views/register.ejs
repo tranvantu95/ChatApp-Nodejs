@@ -2,14 +2,29 @@
 <div>
     <h3 style="text-align: center">Register</h3>
 
-    <%if(error && error.length > 0) {%>
-        <p><%= error[0].message %></p>
+    <% if(error && error.length > 0) { %>
+        <p><%= error[0] %></p>
     <% } %>
 
     <form action="/register" method="post">
         <div>
+            <label>DisplayName:</label>
+            <input type="text" name="display_name"/>
+        </div>
+        <div>
+            <label>Use Username, Email or Phone for login</label>
+        </div>
+        <div>
             <label>Username:</label>
             <input type="text" name="username"/>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="text" name="email"/>
+        </div>
+        <div>
+            <label>Phone:</label>
+            <input type="text" name="phone"/>
         </div>
         <div>
             <label>Password:</label>
