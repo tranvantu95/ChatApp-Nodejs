@@ -3,7 +3,7 @@ let dbpassword = "chatapp123";
 
 let port = process.env.PORT || 8080;
 
-let useLocal = true;
+let useLocal = false;
 
 module.exports = {
     debug: true,

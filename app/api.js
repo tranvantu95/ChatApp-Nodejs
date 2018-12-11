@@ -18,6 +18,18 @@ module.exports = function(app) {
         })
     });
 
+    app.post("/api/register/fast", (req, res) => {
+        let account = req.body.account;
+        let password = req.body.password;
+        if(config.debug) console.log("/api/register", account, password);
+
+        am.fast_register(account, password).then(user => {
+            res.send(new Response(define.success, "", user.getLoginResponse()).toJson());
+        }, err => {
+            res.send(new Response(define.failed, err ? err.message : "").toJson());
+        })
+    });
+
     app.post("/api/register", (req, res) => {
         let display_name = req.body.display_name;
         let username = req.body.username;
