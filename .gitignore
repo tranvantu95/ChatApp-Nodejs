@@ -76,4 +76,4 @@ typings/
 .fusebox/
 
 # my add
-.ide/workspace.xml
+workspace.xml
